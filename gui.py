@@ -2,7 +2,7 @@ import sys
 import os
 
 def resource_path(relative_path):
-    """ الحصول على المسار الصحيح سواء أثناء التطوير أو داخل ملف .exe """
+    
     try:
         base_path = sys._MEIPASS
     except Exception:
@@ -17,7 +17,7 @@ import customtkinter as ctk
 from PIL import Image, ImageTk
 from main import GestureMouseEngine
 
-# إعداد المظهر
+
 ctk.set_appearance_mode("Dark")
 
 class ModernVirtualMouseGUI(ctk.CTk):
@@ -26,7 +26,7 @@ class ModernVirtualMouseGUI(ctk.CTk):
 
         self.title("NEXUS - AI Gesture Controller")
         self.geometry("960x650")
-        self.configure(fg_color="#0F111A")  # خلفية داكنة راقية
+        self.configure(fg_color="#0F111A")  
         self.resizable(False, False)
 
         self.engine = GestureMouseEngine(model_path=resource_path('gesture_recognizer.task'))
@@ -35,7 +35,7 @@ class ModernVirtualMouseGUI(ctk.CTk):
         self.thread = None
         self.iconbitmap(resource_path("icon.ico"))
 
-        # حساب FPS
+        
         self.prev_frame_time = 0
 
         self.setup_ui()
@@ -45,11 +45,11 @@ class ModernVirtualMouseGUI(ctk.CTk):
         self.grid_columnconfigure(1, weight=3)
         self.grid_rowconfigure(0, weight=1)
 
-        # --- الشريط الجانبي (Sidebar) ---
+        
         self.sidebar = ctk.CTkFrame(self, fg_color="#1A1D24", corner_radius=20, border_width=1, border_color="#2A2E3D")
         self.sidebar.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
 
-        # اللوجو والعنوان
+        
         self.logo_label = ctk.CTkLabel(
             self.sidebar, 
             text="⚡ NEXUS AI", 
@@ -66,7 +66,7 @@ class ModernVirtualMouseGUI(ctk.CTk):
         )
         self.subtitle_label.pack(padx=20, pady=(0, 25))
 
-        # زر التشغيل / الإيقاف
+        
         self.btn_toggle = ctk.CTkButton(
             self.sidebar, 
             text="START ENGINE", 
@@ -80,7 +80,7 @@ class ModernVirtualMouseGUI(ctk.CTk):
         )
         self.btn_toggle.pack(padx=20, pady=10, fill="x")
 
-        # بطاقات الحالة المباشرة
+    
         self.status_card = ctk.CTkFrame(self.sidebar, fg_color="#12141C", corner_radius=14, border_width=1, border_color="#252936")
         self.status_card.pack(padx=20, pady=20, fill="x")
 
@@ -95,7 +95,7 @@ class ModernVirtualMouseGUI(ctk.CTk):
         )
         self.status_text.pack(padx=15, pady=(0, 12), anchor="w")
 
-        # --- دليل الحركات المفهوم والموزون ---
+        
         self.guide_frame = ctk.CTkFrame(self.sidebar, fg_color="#12141C", corner_radius=14)
         self.guide_frame.pack(padx=20, pady=(10, 20), fill="both", expand=True)
 
@@ -120,7 +120,7 @@ class ModernVirtualMouseGUI(ctk.CTk):
         )
         self.guide_label.pack(padx=12, pady=12, anchor="nw")
 
-        # --- لوحة الكاميرا الرئيسية (Viewport) ---
+
         self.video_frame = ctk.CTkFrame(self, fg_color="#1A1D24", corner_radius=20, border_width=1, border_color="#2A2E3D")
         self.video_frame.grid(row=0, column=1, padx=(0, 20), pady=20, sticky="nsew")
 
@@ -151,7 +151,7 @@ class ModernVirtualMouseGUI(ctk.CTk):
             self.video_label.configure(image=img_tk, text="")
             self.video_label.image = img_tk
             
-            # تغيير لون الكارت حسب الحركة النشطة
+        
             color_map = {
                 "NAVIGATING": "#00E5FF",
                 "CLICK": "#FFD600",
@@ -184,22 +184,22 @@ class ModernVirtualMouseGUI(ctk.CTk):
                     if not success or frame is None:
                         continue
 
-                    # حساب الـ FPS
+                    
                     new_frame_time = time.time()
                     fps = int(1 / (new_frame_time - self.prev_frame_time)) if self.prev_frame_time > 0 else 0
                     self.prev_frame_time = new_frame_time
 
                     processed_frame, gesture_name = self.engine.process_frame(frame, recognizer)
 
-                    # طباعة عداد الـ FPS بستايل سايبر احترافي
+                    
                     cv2.putText(processed_frame, f"FPS: {fps}", (540, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 229, 255), 2, cv2.LINE_AA)
 
-                    # تحويل الصورة للعرض على Tkinter
+                    
                     rgb_image = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)
                     img = Image.fromarray(rgb_image)
                     img_tk = ImageTk.PhotoImage(image=img)
 
-                    # تحديث الواجهة أسبوعياً
+                
                     self.after(0, self.update_gui_state, img_tk, gesture_name)
         except Exception as e:
             print(f"Error in Vision Loop: {e}")
