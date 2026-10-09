@@ -5,7 +5,7 @@ import math
 import pyautogui
 import mediapipe as mp
 
-# إلغاء خاصية الأمان لـ PyAutoGUI
+
 pyautogui.FAILSAFE = False
 
 
@@ -14,13 +14,13 @@ class GestureMouseEngine:
   def __init__(self, model_path='gesture_recognizer.task'):
     self.model_path = model_path
 
-    # أبعاد الشاشة ومتغيرات التنعيم
+    
     self.screen_width, self.screen_height = pyautogui.size()
     self.prev_x, self.prev_y = 0, 0
     self.smooth_factor = 5
     self.frame_margin = 100
 
-    # إعدادات التوقيت
+  
     self.click_threshold = 35
     self.click_cooldown = 0.3
     self.last_click_time = 0
@@ -28,7 +28,7 @@ class GestureMouseEngine:
     self.scroll_cooldown = 0.08
     self.last_scroll_time = 0
 
-    # روابط المفاصل لرسم الهيكل العظمي للجوانتي (Hand Connections)
+    
     self.HAND_CONNECTIONS = [
         (0, 1),
         (1, 2),
@@ -54,23 +54,23 @@ class GestureMouseEngine:
     ]
 
   def draw_cyber_glove(self, frame, hand_landmarks, h, w):
-    # تحويل كل النقاط لإحداثيات بكسل
+    
     points = []
     for lm in hand_landmarks:
       cx, cy = int(lm.x * w), int(lm.y * h)
       points.append((cx, cy))
 
-    # 1. رسم خطوط الهيكل العظمي المتوهجة (Cyan Glow Lines)
+  
     for start_idx, end_idx in self.HAND_CONNECTIONS:
       p1, p2 = points[start_idx], points[end_idx]
-      # طبقة التوهج الخارجية
+      
       cv2.line(frame, p1, p2, (255, 200, 0), 3, cv2.LINE_AA)
-      # السلك الداخلي المضيء
+  
       cv2.line(frame, p1, p2, (255, 255, 255), 1, cv2.LINE_AA)
 
-    # 2. رسم العقد والجوينتات (Cyber Joint Nodes)
+  
     for i, p in enumerate(points):
-      # أطراف الأصابع تاخد شكل أهداف HUD خاصة
+  
       if i in [4, 8, 12, 16, 20]:
         cv2.circle(frame, p, 9, (255, 229, 0), 2, cv2.LINE_AA)
         cv2.circle(frame, p, 4, (0, 255, 255), cv2.FILLED)
@@ -96,10 +96,10 @@ class GestureMouseEngine:
     if result.hand_landmarks:
       hand_landmarks = result.hand_landmarks[0]
 
-      # رسم تأثير الجوانتي السايبر وحفظ نقاط الأصابع
+    
       points = self.draw_cyber_glove(frame, hand_landmarks, h, w)
 
-      # --- النقاط والمفاصل الحسابية ---
+      
       index_tip, index_mcp = hand_landmarks[8], hand_landmarks[5]
       middle_tip, middle_mcp = hand_landmarks[12], hand_landmarks[9]
       ring_tip, ring_mcp = hand_landmarks[16], hand_landmarks[13]
@@ -108,7 +108,7 @@ class GestureMouseEngine:
       x1, y1 = points[8]
       x2, y2 = points[12]
 
-      # منطق الحركات المعتمد
+  
       four_pointing_up = (
           index_tip.y < index_mcp.y - 0.04
           and middle_tip.y < middle_mcp.y - 0.04
@@ -130,7 +130,7 @@ class GestureMouseEngine:
           and abs(pinky_tip.y - pinky_mcp.y) < 0.04
       )
 
-      # --- تنفيذ الأوامر ---
+  
       if is_fist:
         current_gesture = 'PAUSED'
         cv2.putText(
@@ -196,7 +196,7 @@ class GestureMouseEngine:
 
         if distance < self.click_threshold:
           current_gesture = 'CLICK'
-          # تأثير كليك سايبر على السبابة والوسطى
+          
           cv2.circle(frame, (x1, y1), 14, (0, 0, 255), cv2.FILLED)
           cv2.circle(frame, (x1, y1), 20, (0, 0, 255), 2, cv2.LINE_AA)
           if time.time() - self.last_click_time > self.click_cooldown:
